@@ -8,9 +8,13 @@ import org.springframework.web.bind.annotation.*
 class MemberController {
 
     @PostMapping
-    fun createMember(): ResponseEntity<*> = ResponseEntity.accepted().body(
-        "Member created"
-    )
+    fun createMember(): ResponseEntity<*> {
+
+
+        return ResponseEntity.accepted().body(
+            "Member created"
+        )
+    }
 
     @GetMapping
     fun getMembers(): ResponseEntity<*> = ResponseEntity.ok()
