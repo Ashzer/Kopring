@@ -36,8 +36,11 @@ dependencies {
     //properties 설정 값 읽어오기 위한 의존성(참고 : https://jessyt.tistory.com/110)
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
+    val pipelinrVersion: String by project
+    compileOnly("net.sizovs:pipelinr:$pipelinrVersion")
+
     //exposed
-    val exposedVersion : String by project
+    val exposedVersion: String by project
 //    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
 //    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
 //    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")

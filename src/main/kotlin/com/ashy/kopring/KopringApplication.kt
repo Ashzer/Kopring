@@ -27,5 +27,4 @@ class SchemaInitialize : ApplicationRunner {
         SchemaUtils.drop(MemberEntity)
         SchemaUtils.create(MemberEntity)
     }
-
 }

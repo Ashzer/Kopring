@@ -1,21 +1,27 @@
 package com.ashy.kopring.features.member
 
+import an.awesome.pipelinr.CommandHandlers
+import an.awesome.pipelinr.Pipeline
+import an.awesome.pipelinr.Pipelinr
 import com.ashy.kopring.features.member.commands.CreateMember
+import com.ashy.kopring.features.member.commands.handlers.CreateMemberHandler
 import com.ashy.kopring.infrastructure.repositories.MemberRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.stream.Stream
 
 @RestController
 @RequestMapping("/member")
 class MemberController(private val memberRepository: MemberRepository) {
 
-
     @PostMapping
     fun createMember(@RequestBody createMember: CreateMember): ResponseEntity<*> {
+        val handler = CommandHandlers{ Stream.of(CreateMemberHandler(memberRepository))}
+        val result = createMember.execute(Pipelinr().with(handler))
 
-        memberRepository.create(createMember)
+
         return ResponseEntity.accepted().body(
-            "Member created"
+            result
         )
     }
 
