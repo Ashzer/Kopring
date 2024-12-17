@@ -1,16 +1,19 @@
 package com.ashy.kopring.features.member
 
+import com.ashy.kopring.features.member.commands.CreateMember
+import com.ashy.kopring.infrastructure.repositories.MemberRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/member")
-class MemberController {
+class MemberController(private val memberRepository: MemberRepository) {
+
 
     @PostMapping
-    fun createMember(): ResponseEntity<*> {
+    fun createMember(@RequestBody createMember: CreateMember): ResponseEntity<*> {
 
-
+        memberRepository.create(createMember)
         return ResponseEntity.accepted().body(
             "Member created"
         )
