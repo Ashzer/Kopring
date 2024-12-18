@@ -6,10 +6,12 @@ import com.ashy.kopring.infrastructure.repositories.MemberRepository
 import org.springframework.stereotype.Component
 
 @Component
-class CreateMemberHandler (private val memberRepository: MemberRepository) : Handler<CreateMember, String> {
-    override fun handle(command : CreateMember): String {
+class CreateMemberHandler(private val memberRepository: MemberRepository) : Handler<CreateMember, String> {
+    constructor() : this(MemberRepository())
 
-        val id  = memberRepository.create(command)
+    override fun handle(command: CreateMember): String {
+
+        val id = memberRepository.create(command)
 
         return "Member created #$id ${command.name} is ${command.age} years old"
     }
