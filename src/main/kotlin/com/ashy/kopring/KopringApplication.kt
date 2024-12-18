@@ -1,8 +1,8 @@
 package com.ashy.kopring
 
+import com.ashy.kopring.infrastructure.entities.BoardEntity
 import com.ashy.kopring.infrastructure.entities.MemberEntity
 import org.jetbrains.exposed.spring.autoconfigure.ExposedAutoConfiguration
-import org.jetbrains.exposed.sql.Schema
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -24,7 +24,8 @@ fun main(args: Array<String>) {
 @Transactional
 class SchemaInitialize : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
-        SchemaUtils.drop(MemberEntity)
-        SchemaUtils.create(MemberEntity)
+        SchemaUtils.drop(MemberEntity, BoardEntity)
+        SchemaUtils.create(MemberEntity, BoardEntity)
+
     }
 }

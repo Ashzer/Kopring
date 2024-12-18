@@ -1,26 +1,24 @@
 package com.ashy.kopring.features.member
 
-import an.awesome.pipelinr.CommandHandlers
-import an.awesome.pipelinr.Pipelinr
+import an.awesome.pipelinr.Pipeline
 import com.ashy.kopring.features.member.commands.CreateMember
-import com.ashy.kopring.features.member.commands.handlers.CreateMemberHandler
+import com.ashy.kopring.infrastructure.platform.BaseUserController
+import com.ashy.kopring.infrastructure.repositories.MemberRepository
+import com.ashy.kopring.infrastructure.services.AuthenticationManager
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.stream.Stream
 
 @RestController
 @RequestMapping("/member")
-class MemberController {
+class MemberController(
+    pipeline: Pipeline, authenticationManager: AuthenticationManager, memberRepository: MemberRepository
+) : BaseUserController(
+    pipeline, authenticationManager, memberRepository
+) {
 
     @PostMapping
     fun createMember(@RequestBody createMember: CreateMember): ResponseEntity<*> {
-        val handler = CommandHandlers { Stream.of(CreateMemberHandler()) }
-        val result = createMember.execute(Pipelinr().with(handler))
-
-
-        return ResponseEntity.accepted().body(
-            result
-        )
+        return handleWithResponseMessage(createMember)
     }
 
     @GetMapping
@@ -34,5 +32,6 @@ class MemberController {
     @PutMapping("/{memberId}")
     fun updateMember(@PathVariable("memberId") memberId: Int): ResponseEntity<*> =
         ResponseEntity.accepted().body("Member$memberId updated")
+
 }
 
