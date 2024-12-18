@@ -15,12 +15,10 @@ class BaseUserController(
 ) : BaseController(pipeline) {
 
     override fun preProcessRequest(command: Command<*>): HttpStatus {
-        if(command is BaseIdentityCommand<*>){
-            val memberId = command.memberId
-            memberRepository.findById(memberId)
-            return HttpStatus.ACCEPTED
+        return if(command is BaseIdentityCommand<*>){
+            HttpStatus.ACCEPTED
         } else {
-            return HttpStatus.NOT_ACCEPTABLE
+            HttpStatus.NOT_ACCEPTABLE
         }
     }
 }

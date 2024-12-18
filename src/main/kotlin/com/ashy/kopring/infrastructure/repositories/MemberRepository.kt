@@ -4,7 +4,10 @@ import com.ashy.kopring.features.member.commands.CreateMember
 import com.ashy.kopring.infrastructure.entities.Member
 import com.ashy.kopring.infrastructure.entities.Member.MemberId
 import com.ashy.kopring.infrastructure.entities.MemberEntity
+import com.ashy.kopring.infrastructure.model.MemberDto
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -22,10 +25,21 @@ class MemberRepository {
         return MemberId(id.value)
     }
 
-    fun findById(id: MemberId): MemberEntity? {
+    fun findById(id: Int): MemberDto? {
         transaction {
-            return MemberEntity.selectAll().where { MemberEntity.id eq id.value}.fi
+            addLogger(StdOutSqlLogger)
+            MemberEntity.selectAll().where { MemberEntity.id eq id }.first()
+        }.let {
+            return MemberDto(it[MemberEntity.id].value, it[MemberEntity.name], it[MemberEntity.age])
+        }
+    }
 
+    fun findAll(): List<MemberDto> {
+        return transaction {
+            addLogger(StdOutSqlLogger)
+            MemberEntity.selectAll().map {
+                MemberDto(it[MemberEntity.id].value, it[MemberEntity.name], it[MemberEntity.age])
+            }
         }
     }
 }

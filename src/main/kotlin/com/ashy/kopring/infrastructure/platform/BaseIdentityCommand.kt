@@ -7,5 +7,5 @@ open class BaseIdentityCommand<T>(
     val nickname : String,
     val role : Collection<String>,
 ) : Command<T> {
-    constructor() : this(0, "", emptyList())
+    constructor() : this(1, "", emptyList())
 }

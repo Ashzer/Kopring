@@ -2,6 +2,7 @@ package com.ashy.kopring.features.member
 
 import an.awesome.pipelinr.Pipeline
 import com.ashy.kopring.features.member.commands.CreateMember
+import com.ashy.kopring.features.member.queries.GetMembers
 import com.ashy.kopring.infrastructure.platform.BaseUserController
 import com.ashy.kopring.infrastructure.repositories.MemberRepository
 import com.ashy.kopring.infrastructure.services.AuthenticationManager
@@ -22,8 +23,10 @@ class MemberController(
     }
 
     @GetMapping
-    fun getMembers(): ResponseEntity<*> = ResponseEntity.ok()
-        .body(listOf("Hello, Member1!", "Hello, Member2!", "Hello, Member3!", "Hello, Member4!", "Hello, Member5!"))
+    fun getMembers(): ResponseEntity<*> {
+        val getMembers = GetMembers()
+        return handleWithResponseMessage(getMembers)
+    }
 
     @GetMapping("/{memberId}")
     fun getMemberDetail(@PathVariable("memberId") memberId: Int): ResponseEntity<*> =
