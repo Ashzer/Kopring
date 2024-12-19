@@ -9,13 +9,12 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class BaseUserController(
-    pipeline: Pipeline,
-    val authenticationManager: AuthenticationManager,
-    val memberRepository: MemberRepository
+    pipeline: Pipeline, val authenticationManager: AuthenticationManager, val memberRepository: MemberRepository
 ) : BaseController(pipeline) {
 
     override fun preProcessRequest(command: Command<*>): HttpStatus {
-        return if(command is BaseIdentityCommand<*>){
+        return if (command is BaseIdentityCommand<*>) {
+            //TODO implement authentication
             HttpStatus.ACCEPTED
         } else {
             HttpStatus.NOT_ACCEPTABLE

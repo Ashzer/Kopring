@@ -1,7 +1,6 @@
 package com.ashy.kopring.infrastructure.repositories
 
 import com.ashy.kopring.features.member.commands.CreateMember
-import com.ashy.kopring.features.member.commands.handlers.DeleteMemberHandler
 import com.ashy.kopring.infrastructure.entities.Member.MemberId
 import com.ashy.kopring.infrastructure.entities.MemberEntity
 import com.ashy.kopring.infrastructure.model.MemberDto
@@ -10,11 +9,11 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.sql.SQLIntegrityConstraintViolationException
 
 @Component
 @Transactional
 class MemberRepository {
-    private final val deleteMemberHandler: DeleteMemberHandler = TODO("initialize me")
 
     fun create(createMember: CreateMember): MemberId {
         transaction {
@@ -34,11 +33,16 @@ class MemberRepository {
         }.let { return it }
     }
 
-    fun deleteMemberById(id: Int): Int {
-        MemberEntity.deleteWhere { MemberEntity.id eq id }.let { return it }
+    fun deleteMemberById(id: Int): Result<Int> {
+        return tryctach {
+            transaction {
+                MemberEntity.deleteWhere { MemberEntity.id eq id }
+            }
+        }
     }
 
-    fun findById(id: Int): MemberDto? {
+
+    fun findById(id: Int): MemberDto {
         transaction {
             addLogger(StdOutSqlLogger)
             MemberEntity.selectAll().where { MemberEntity.id eq id }.first()
@@ -53,5 +57,19 @@ class MemberRepository {
                 MemberDto(it[MemberEntity.id].value, it[MemberEntity.name], it[MemberEntity.age])
             }
         }
+    }
+}
+
+fun <T> tryctach(action: () -> T): Result<T> {
+    return try {
+        Result.success(action())
+    } catch (e: SQLIntegrityConstraintViolationException) {
+        exposedLogger.error("Error ${e.message}")
+        e.errorCode
+        Result.failure(e)
+    } catch (e: Exception) {
+        exposedLogger.error("Error $e")
+
+        Result.failure(e)
     }
 }

@@ -24,6 +24,7 @@ abstract class BaseController(val pipeline: Pipeline) {
                 }
                 return ResponseEntity.status(message.status).body(
                     ResponseMessage<T>(
+                        status = message.status,
                         message = message.message,
                         fieldErrors = message.fieldErrors,
                         keyError = message.keyError,
