@@ -3,13 +3,13 @@ package com.ashy.kopring.infrastructure.repositories
 import com.ashy.kopring.features.member.commands.CreateMember
 import com.ashy.kopring.infrastructure.entities.Member.MemberId
 import com.ashy.kopring.infrastructure.entities.MemberEntity
+import com.ashy.kopring.infrastructure.extensions.handleDatabaseOperation
 import com.ashy.kopring.infrastructure.model.MemberDto
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
-import java.sql.SQLIntegrityConstraintViolationException
 
 @Component
 @Transactional
@@ -34,10 +34,8 @@ class MemberRepository {
     }
 
     fun deleteMemberById(id: Int): Result<Int> {
-        return tryctach {
-            transaction {
-                MemberEntity.deleteWhere { MemberEntity.id eq id }
-            }
+        return handleDatabaseOperation("delete member by id") {
+            MemberEntity.deleteWhere { MemberEntity.id eq id }
         }
     }
 
@@ -60,16 +58,3 @@ class MemberRepository {
     }
 }
 
-fun <T> tryctach(action: () -> T): Result<T> {
-    return try {
-        Result.success(action())
-    } catch (e: SQLIntegrityConstraintViolationException) {
-        exposedLogger.error("Error ${e.message}")
-        e.errorCode
-        Result.failure(e)
-    } catch (e: Exception) {
-        exposedLogger.error("Error $e")
-
-        Result.failure(e)
-    }
-}
