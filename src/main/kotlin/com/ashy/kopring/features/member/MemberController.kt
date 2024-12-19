@@ -2,6 +2,8 @@ package com.ashy.kopring.features.member
 
 import an.awesome.pipelinr.Pipeline
 import com.ashy.kopring.features.member.commands.CreateMember
+import com.ashy.kopring.features.member.commands.DeleteMember
+import com.ashy.kopring.features.member.commands.UpdateMember
 import com.ashy.kopring.features.member.queries.GetMembers
 import com.ashy.kopring.infrastructure.platform.BaseUserController
 import com.ashy.kopring.infrastructure.repositories.MemberRepository
@@ -18,23 +20,20 @@ class MemberController(
 ) {
 
     @PostMapping
-    fun createMember(@RequestBody createMember: CreateMember): ResponseEntity<*> {
-        return handleWithResponseMessage(createMember)
-    }
+    fun createMember(@RequestBody createMember: CreateMember) = handleWithResponseMessage(createMember)
 
     @GetMapping
-    fun getMembers(): ResponseEntity<*> {
-        val getMembers = GetMembers()
-        return handleWithResponseMessage(getMembers)
-    }
+    fun getMembers() = handleWithResponseMessage(GetMembers())
 
     @GetMapping("/{memberId}")
     fun getMemberDetail(@PathVariable("memberId") memberId: Int): ResponseEntity<*> =
         ResponseEntity.ok().body("Member$memberId detail")
 
     @PutMapping("/{memberId}")
-    fun updateMember(@PathVariable("memberId") memberId: Int): ResponseEntity<*> =
-        ResponseEntity.accepted().body("Member$memberId updated")
+    fun updateMember(@PathVariable("memberId") memberId: Int, @RequestBody updateMember: UpdateMember) =
+        handleWithResponseMessage(updateMember.copy(id = memberId))
 
+    @DeleteMapping("/{memberId}")
+    fun deleteMember(@PathVariable("memberId") memberId: Int) = handleWithResponseMessage(DeleteMember(id = memberId))
 }
 

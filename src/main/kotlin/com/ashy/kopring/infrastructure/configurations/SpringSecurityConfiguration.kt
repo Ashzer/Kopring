@@ -32,7 +32,7 @@ class SpringSecurityConfiguration {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.authorizeHttpRequests { authorize ->
-            authorize.requestMatchers("/member").permitAll().anyRequest().authenticated()
+            authorize.requestMatchers("/member/**").permitAll().anyRequest().authenticated()
         }.cors { cors -> cors.disable() }.csrf { csrf -> csrf.disable() }.exceptionHandling {
             it.authenticationEntryPoint { _, response, _ ->
                 response.sendError(401, "Unauthorized")
