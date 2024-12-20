@@ -4,6 +4,9 @@ import com.ashy.kopring.infrastructure.entities.BoardEntity
 import com.ashy.kopring.infrastructure.entities.MemberEntity
 import org.jetbrains.exposed.spring.autoconfigure.ExposedAutoConfiguration
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration

@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional
 @Component
 class DeleteMemberHandler(private val memberRepository: MemberRepository) :
     Handler<DeleteMember, ResponseMessage<String>> {
-        
+
+    @Transactional
     override fun handle(command: DeleteMember): ResponseMessage<String> {
         return memberRepository.deleteMemberById(command.id).fold(onSuccess = {
             if (it == 0) {

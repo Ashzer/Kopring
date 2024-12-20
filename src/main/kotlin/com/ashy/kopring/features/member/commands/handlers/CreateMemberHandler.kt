@@ -6,11 +6,13 @@ import com.ashy.kopring.infrastructure.repositories.MemberRepository
 import com.ashy.kopring.infrastructure.response.ResponseMessage
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class CreateMemberHandler(private val memberRepository: MemberRepository) :
     Handler<CreateMember, ResponseMessage<String>> {
 
+    @Transactional
     override fun handle(command: CreateMember): ResponseMessage<String> {
 
         val id = memberRepository.create(command)

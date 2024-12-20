@@ -36,4 +36,3 @@ class MemberController(
     @DeleteMapping("/{memberId}")
     fun deleteMember(@PathVariable("memberId") memberId: Int) = handleWithResponseMessage(DeleteMember(id = memberId))
 }
-

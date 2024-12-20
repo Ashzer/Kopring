@@ -6,9 +6,15 @@ import org.jetbrains.exposed.sql.exposedLogger
 import java.sql.SQLIntegrityConstraintViolationException
 import java.sql.SQLSyntaxErrorException
 
-fun <T> handleDatabaseOperation(context: String, operation: () -> T): Result<T> {
+fun <T> handleDatabaseOperation(operation: () -> T): Result<T> {
+    val context = Thread.currentThread().stackTrace[2].let {
+        "${it.className} in method name: ${it.methodName}"
+    }
+    exposedLogger.info("$context | Start")
     return try {
-        Result.success(operation())
+        Result.success(operation()).also {
+            exposedLogger.info("$context | Completed Successfully")
+        }
     } catch (e: ExposedSQLException) {
         val failure = when (val cause = e.cause) {
             is SQLIntegrityConstraintViolationException -> {
@@ -34,7 +40,7 @@ fun <T> handleDatabaseOperation(context: String, operation: () -> T): Result<T> 
         }
         Result.failure(failure)
     } catch (e: Exception) {
-        exposedLogger.error("$context | Error $e")
-        Result.failure(DatabaseFailure.UnknownFailure(e.message ?: "Unknown error", e))
+        exposedLogger.error("$context | Unexpected Error: $e")
+        Result.failure(DatabaseFailure.UnknownFailure(e.message ?: "Unexpected error", e))
     }
 }

@@ -4,6 +4,7 @@ import an.awesome.pipelinr.Command
 import com.ashy.kopring.features.member.queries.GetMembers
 import com.ashy.kopring.infrastructure.model.MemberDto
 import com.ashy.kopring.infrastructure.repositories.MemberRepository
+import com.ashy.kopring.infrastructure.repositories.impl.MemberRepositoryImpl
 import com.ashy.kopring.infrastructure.response.ResponseMessage
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
