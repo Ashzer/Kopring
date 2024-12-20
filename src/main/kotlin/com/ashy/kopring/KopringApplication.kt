@@ -24,7 +24,14 @@ fun main(args: Array<String>) {
 class SchemaInitialize : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
         val tables = arrayOf(
-            MemberEntity, BoardEntity, ArticleEntity, ArticlePreferenceEntity, CommentEntity, TokenEntity
+            MemberEntity,
+            BoardEntity,
+            ArticleEntity,
+            ArticlePreferenceEntity,
+            CommentEntity,
+            TokenEntity,
+            TermPolicyEntity,
+            TermPolicyAgreementEntity
         )
         SchemaUtils.drop(*tables)
         SchemaUtils.create(*tables)
