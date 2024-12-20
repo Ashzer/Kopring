@@ -1,6 +1,7 @@
 package com.ashy.kopring.infrastructure.entities
 
 import com.ashy.kopring.infrastructure.enums.LoginType
+import java.time.OffsetDateTime
 
 data class Token(
     val id: Token?,
@@ -9,8 +10,8 @@ data class Token(
     val loginType: LoginType,
     val socialAccessToken: String?,
     val socialRefreshToken: String?,
-    val createdAt: String,
-    val expiredAt: String,
+    val createdAt: OffsetDateTime,
+    val expiredAt: OffsetDateTime,
     val memberId: Member.MemberId
 ) {
     @JvmInline

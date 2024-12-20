@@ -31,7 +31,8 @@ class SchemaInitialize : ApplicationRunner {
             CommentEntity,
             TokenEntity,
             TermPolicyEntity,
-            TermPolicyAgreementEntity
+            TermPolicyAgreementEntity,
+            MobileAppVersionEntity
         )
         SchemaUtils.drop(*tables)
         SchemaUtils.create(*tables)
