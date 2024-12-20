@@ -34,7 +34,8 @@ class SchemaInitialize : ApplicationRunner {
             TermPolicyAgreementEntity,
             MobileAppVersionEntity,
             InsigniaEntity,
-            MemberInsigniaMappingEntity
+            MemberInsigniaMappingEntity,
+            LossCutEntity
         )
         SchemaUtils.drop(*tables)
         SchemaUtils.create(*tables)
