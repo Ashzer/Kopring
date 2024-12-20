@@ -23,7 +23,10 @@ fun main(args: Array<String>) {
 @Transactional
 class SchemaInitialize : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
-        SchemaUtils.drop(MemberEntity, BoardEntity, ArticleEntity, ArticlePreferenceEntity, CommentEntity)
-        SchemaUtils.create(MemberEntity, BoardEntity, ArticleEntity, ArticlePreferenceEntity, CommentEntity)
+        val tables = arrayOf(
+            MemberEntity, BoardEntity, ArticleEntity, ArticlePreferenceEntity, CommentEntity, TokenEntity
+        )
+        SchemaUtils.drop(*tables)
+        SchemaUtils.create(*tables)
     }
 }
