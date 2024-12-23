@@ -17,7 +17,11 @@ sealed class DatabaseFailure : Exception() {
         override val message: String, override val cause: ExposedSQLException
     ) : DatabaseFailure()
 
+    data class DataNotFoundFailure(
+        override val message: String, override val cause: Throwable
+    ) : DatabaseFailure()
+
     data class UnknownFailure(
-        override val message: String, override val cause: Exception
+        override val message: String, override val cause: Throwable
     ) : DatabaseFailure()
 }

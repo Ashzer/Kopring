@@ -17,24 +17,19 @@ class DeleteMemberHandler(private val memberRepository: MemberRepository) :
     @Transactional
     override fun handle(command: DeleteMember): ResponseMessage<String> {
         return memberRepository.deleteMemberById(command.id).fold(onSuccess = {
-            if (it == 0) {
-                ResponseMessage.ofBadRequest(
-                    HttpStatus.NOT_FOUND, ErrorConst.MEMBER_NOT_FOUND, mapOf("id" to "${command.id}")
-                )
-            } else {
-                ResponseMessage.of(HttpStatus.ACCEPTED, "Member deleted with id: ${command.id}")
-            }
+            ResponseMessage.of(HttpStatus.ACCEPTED, "Member deleted with id: ${command.id}")
+
         }, onFailure = { failure ->
-            val status = when (failure) {
-                is DatabaseFailure.ConstraintViolationFailure -> HttpStatus.CONFLICT
-                is DatabaseFailure.SQLSyntaxFailure -> HttpStatus.BAD_REQUEST
-                else -> HttpStatus.INTERNAL_SERVER_ERROR
+            when (failure) {
+                is DatabaseFailure.ConstraintViolationFailure -> HttpStatus.CONFLICT to ErrorConst.MEMBER_CANNOT_BE_DELETED
+                is DatabaseFailure.SQLSyntaxFailure -> HttpStatus.BAD_REQUEST to ErrorConst.MEMBER_FAILED_TO_DELETE
+                is DatabaseFailure.DataNotFoundFailure -> HttpStatus.NOT_FOUND to ErrorConst.MEMBER_NOT_FOUND
+                else -> HttpStatus.INTERNAL_SERVER_ERROR to ErrorConst.MEMBER_FAILED_TO_DELETE
+            }.let { (status, errorConst) ->
+                ResponseMessage.ofBadRequest(
+                    status, errorConst, mapOf("id" to "${command.id}")
+                )
             }
-            ResponseMessage.ofBadRequest(
-                status,
-                ErrorConst.MEMBER_FAILED_TO_DELETE,
-                mapOf("id" to "${command.id}", "message" to (failure.message ?: "None"))
-            )
         })
     }
 }

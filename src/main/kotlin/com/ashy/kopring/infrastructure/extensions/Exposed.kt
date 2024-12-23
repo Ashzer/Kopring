@@ -1,8 +1,11 @@
 package com.ashy.kopring.infrastructure.extensions
 
 import com.ashy.kopring.infrastructure.failures.DatabaseFailure
+import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.exposedLogger
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.SQLIntegrityConstraintViolationException
 import java.sql.SQLSyntaxErrorException
@@ -47,3 +50,6 @@ fun <T> handleDatabaseOperation(operation: () -> T): Result<T> {
         Result.failure(DatabaseFailure.UnknownFailure(e.message ?: "Unexpected error", e))
     }
 }
+
+fun <T : IntIdTable> T.existById(id: Int) = !this.selectAll().where { this@existById.id eq id }.empty()
+fun <T : LongIdTable> T.existById(id: Long) = !this.selectAll().where { this@existById.id eq id }.empty()
