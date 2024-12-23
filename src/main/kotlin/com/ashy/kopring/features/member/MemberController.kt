@@ -20,19 +20,19 @@ class MemberController(
 ) {
 
     @PostMapping
-    fun createMember(@RequestBody createMember: CreateMember) = handleWithResponseMessage(createMember)
+    suspend fun createMember(@RequestBody createMember: CreateMember) = handleWithResponseMessage(createMember)
 
     @GetMapping
-    fun getMembers() = handleWithResponseMessage(GetMembers())
+    suspend fun getMembers() = handleWithResponseMessage(GetMembers())
 
     @GetMapping("/{memberId}")
     fun getMemberDetail(@PathVariable("memberId") memberId: Int): ResponseEntity<*> =
         ResponseEntity.ok().body("Member$memberId detail")
 
     @PutMapping("/{memberId}")
-    fun updateMember(@PathVariable("memberId") memberId: Int, @RequestBody updateMember: UpdateMember) =
+    suspend fun updateMember(@PathVariable("memberId") memberId: Int, @RequestBody updateMember: UpdateMember) =
         handleWithResponseMessage(updateMember.copy(id = memberId))
 
     @DeleteMapping("/{memberId}")
-    fun deleteMember(@PathVariable("memberId") memberId: Int) = handleWithResponseMessage(DeleteMember(id = memberId))
+    suspend fun deleteMember(@PathVariable("memberId") memberId: Int) = handleWithResponseMessage(DeleteMember(id = memberId))
 }

@@ -7,6 +7,7 @@ import com.ashy.kopring.infrastructure.extensions.now
 import com.ashy.kopring.infrastructure.failures.DatabaseFailure
 import com.ashy.kopring.infrastructure.repositories.MemberRepository
 import com.ashy.kopring.infrastructure.response.ResponseMessage
+import kotlinx.coroutines.coroutineScope
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -17,6 +18,7 @@ class DeleteMemberHandler(private val memberRepository: MemberRepository) :
 
     @Transactional
     override fun handle(command: DeleteMember): ResponseMessage<String> {
+
         return memberRepository.deleteMemberById(command.id).fold(onSuccess = {
             ResponseMessage.of(HttpStatus.ACCEPTED, "Member deleted with id: ${command.id}")
         }, onFailure = { failure ->

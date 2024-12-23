@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 abstract class BaseController(val pipeline: Pipeline) {
     abstract fun preProcessRequest(command: Command<*>): HttpStatus
 
-    protected fun <T> handleWithResponseMessage(command: Command<ResponseMessage<T>>): ResponseEntity<*> {
+    protected suspend fun <T> handleWithResponseMessage(command: Command<ResponseMessage<T>>): ResponseEntity<*> {
         try {
             val preProcessStatus = preProcessRequest(command)
             if (preProcessStatus == HttpStatus.ACCEPTED) {
