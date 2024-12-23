@@ -5,8 +5,6 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.exposedLogger
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.SQLIntegrityConstraintViolationException
 import java.sql.SQLSyntaxErrorException
 
@@ -16,40 +14,33 @@ fun <T> handleDatabaseOperation(operation: () -> T): Result<T> {
     }
     exposedLogger.info("$context | Start")
     return try {
-        transaction {
-            Result.success(operation()).also {
-                exposedLogger.info("$context | Completed Successfully")
-            }
+        Result.success(operation()).also {
+            exposedLogger.info("$context | Completed Successfully")
         }
     } catch (e: ExposedSQLException) {
         val failure = when (val cause = e.cause) {
             is SQLIntegrityConstraintViolationException -> {
                 exposedLogger.error("$context | SQL integrity constraint violation: $e")
-                DatabaseFailure.ConstraintViolationFailure(
-                    e.message ?: "SQL integrity constraint violation", cause
-                )
+                DatabaseFailure.ConstraintViolationFailure(cause)
             }
 
             is SQLSyntaxErrorException -> {
                 exposedLogger.error("$context | SQL syntax error: $e")
-                DatabaseFailure.SQLSyntaxFailure(
-                    e.message ?: "SQL syntax error", cause
-                )
+                DatabaseFailure.SQLSyntaxFailure(cause)
             }
 
             else -> {
                 exposedLogger.error("$context | Unknown SQL error: $e")
-                DatabaseFailure.UnknownSQLFailure(
-                    e.message ?: "Unknown SQL error", e
-                )
+                DatabaseFailure.UnknownSQLFailure(e)
             }
         }
         Result.failure(failure)
     } catch (e: Exception) {
         exposedLogger.error("$context | Unexpected Error: $e")
-        Result.failure(DatabaseFailure.UnknownFailure(e.message ?: "Unexpected error", e))
+        Result.failure(DatabaseFailure.UnknownFailure)
     }
 }
 
-fun <T : IntIdTable> T.existById(id: Int) = !this.selectAll().where { this@existById.id eq id }.empty()
-fun <T : LongIdTable> T.existById(id: Long) = !this.selectAll().where { this@existById.id eq id }.empty()
+fun <T : IntIdTable> T.existById(id: Int) = this.select(this.id).where { this@existById.id eq id }.limit(1).count() > 0
+fun <T : LongIdTable> T.existById(id: Long) =
+    this.select(this.id).where { this@existById.id eq id }.limit(1).count() > 0

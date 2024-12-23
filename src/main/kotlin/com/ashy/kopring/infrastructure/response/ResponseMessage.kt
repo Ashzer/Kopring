@@ -36,7 +36,7 @@ data class ResponseMessage<T>(
             return responseMessage
         }
 
-        fun <T> ofBadRequest(status: HttpStatus, errorConst: ErrorConst, fieldErrors: Map<String, String>) =
+        fun <T> ofFailure(status: HttpStatus, errorConst: ErrorConst, fieldErrors: Map<String, String>) =
             ResponseMessage<T>(status, errorConst.message, fieldErrors, errorConst.name, errorConst.code)
     }/*
     fun <T> ofBadRequest(message: String, fieldErrors: Map<String, String>, keyError: String) =

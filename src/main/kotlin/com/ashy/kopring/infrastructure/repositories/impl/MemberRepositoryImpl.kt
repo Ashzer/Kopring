@@ -14,16 +14,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 
 @Repository
-class MemberRepositoryImpl : MemberRepository {/*
-    override fun create(createMember: CreateMember): MemberId {
-        transaction {
-            MemberEntity.insertAndGetId {
-                it[name] = createMember.name
-                it[age] = createMember.age
-            }
-        }.let { return MemberId(it.value) }
-    }*/
-
+class MemberRepositoryImpl : MemberRepository {
     override fun create(createMember: CreateMember) = handleDatabaseOperation {
         MemberEntity.insertAndGetId {
             it[name] = createMember.name
@@ -38,12 +29,12 @@ class MemberRepositoryImpl : MemberRepository {/*
             if (exist) {
                 handleDatabaseOperation {
                     MemberEntity.update({ MemberEntity.id eq id }) {
-                        it[MemberEntity.name] = MemberEntity.name
-                        it[MemberEntity.age] = MemberEntity.age
+                        it[MemberEntity.name] = name
+                        it[MemberEntity.age] = age
                     }
                 }
             } else {
-                Result.failure(DatabaseFailure.DataNotFoundFailure("Data not found", Throwable()))
+                Result.failure(DatabaseFailure.DataNotFoundFailure)
             }
         }
     }
@@ -55,7 +46,7 @@ class MemberRepositoryImpl : MemberRepository {/*
                     MemberEntity.deleteWhere { MemberEntity.id eq id }
                 }
             } else {
-                Result.failure(DatabaseFailure.DataNotFoundFailure("Data not found", Throwable()))
+                Result.failure(DatabaseFailure.DataNotFoundFailure)
             }
         }
     }
@@ -63,7 +54,7 @@ class MemberRepositoryImpl : MemberRepository {/*
     override fun findAll(): List<MemberDto> {
         return transaction {
             addLogger(StdOutSqlLogger)
-            MemberEntity.selectAll().map {
+            MemberEntity.select(MemberEntity.id, MemberEntity.name, MemberEntity.age).map {
                 MemberDto(it[MemberEntity.id].value, it[MemberEntity.name], it[MemberEntity.age])
             }.toList()
         }

@@ -5,7 +5,6 @@ import an.awesome.pipelinr.Pipeline
 import com.ashy.kopring.infrastructure.constants.ErrorConst
 import com.ashy.kopring.infrastructure.extensions.logger
 import com.ashy.kopring.infrastructure.response.ResponseMessage
-import com.ashy.kopring.infrastructure.services.AuthenticationManager
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -35,7 +34,7 @@ abstract class BaseController(val pipeline: Pipeline) {
 
             if (preProcessStatus == HttpStatus.NOT_ACCEPTABLE) {
                 return ResponseEntity.badRequest().body<ResponseMessage<T>>(
-                    ResponseMessage.ofBadRequest(
+                    ResponseMessage.ofFailure(
                         status = HttpStatus.NOT_ACCEPTABLE,
                         errorConst = ErrorConst.INVALID_DATA,
                         fieldErrors = emptyMap()

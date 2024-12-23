@@ -3,6 +3,7 @@ package com.ashy.kopring.features.member.commands.handlers
 import an.awesome.pipelinr.Command.Handler
 import com.ashy.kopring.features.member.commands.DeleteMember
 import com.ashy.kopring.infrastructure.constants.ErrorConst
+import com.ashy.kopring.infrastructure.extensions.now
 import com.ashy.kopring.infrastructure.failures.DatabaseFailure
 import com.ashy.kopring.infrastructure.repositories.MemberRepository
 import com.ashy.kopring.infrastructure.response.ResponseMessage
@@ -18,7 +19,6 @@ class DeleteMemberHandler(private val memberRepository: MemberRepository) :
     override fun handle(command: DeleteMember): ResponseMessage<String> {
         return memberRepository.deleteMemberById(command.id).fold(onSuccess = {
             ResponseMessage.of(HttpStatus.ACCEPTED, "Member deleted with id: ${command.id}")
-
         }, onFailure = { failure ->
             when (failure) {
                 is DatabaseFailure.ConstraintViolationFailure -> HttpStatus.CONFLICT to ErrorConst.MEMBER_CANNOT_BE_DELETED
@@ -26,7 +26,7 @@ class DeleteMemberHandler(private val memberRepository: MemberRepository) :
                 is DatabaseFailure.DataNotFoundFailure -> HttpStatus.NOT_FOUND to ErrorConst.MEMBER_NOT_FOUND
                 else -> HttpStatus.INTERNAL_SERVER_ERROR to ErrorConst.MEMBER_FAILED_TO_DELETE
             }.let { (status, errorConst) ->
-                ResponseMessage.ofBadRequest(
+                ResponseMessage.ofFailure(
                     status, errorConst, mapOf("id" to "${command.id}")
                 )
             }

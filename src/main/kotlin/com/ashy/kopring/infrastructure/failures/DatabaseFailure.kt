@@ -6,22 +6,22 @@ import java.sql.SQLSyntaxErrorException
 
 sealed class DatabaseFailure : Exception() {
     data class ConstraintViolationFailure(
-        override val message: String, override val cause: SQLIntegrityConstraintViolationException
+        override val cause: SQLIntegrityConstraintViolationException
     ) : DatabaseFailure()
 
     data class SQLSyntaxFailure(
-        override val message: String, override val cause: SQLSyntaxErrorException
+        override val cause: SQLSyntaxErrorException
     ) : DatabaseFailure()
 
     data class UnknownSQLFailure(
-        override val message: String, override val cause: ExposedSQLException
+        override val cause: ExposedSQLException
     ) : DatabaseFailure()
 
-    data class DataNotFoundFailure(
-        override val message: String, override val cause: Throwable
-    ) : DatabaseFailure()
+    data object DataNotFoundFailure : DatabaseFailure() {
+        private fun readResolve(): Any = DataNotFoundFailure
+    }
 
-    data class UnknownFailure(
-        override val message: String, override val cause: Throwable
-    ) : DatabaseFailure()
+    data object UnknownFailure : DatabaseFailure() {
+        private fun readResolve(): Any = UnknownFailure
+    }
 }

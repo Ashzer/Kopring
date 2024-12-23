@@ -3,6 +3,7 @@ package com.ashy.kopring
 import com.ashy.kopring.infrastructure.entities.*
 import org.jetbrains.exposed.spring.autoconfigure.ExposedAutoConfiguration
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
@@ -23,6 +24,7 @@ fun main(args: Array<String>) {
 @Transactional
 class SchemaInitialize : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
+
         val tables = arrayOf(
             MemberEntity,
             BoardEntity,
