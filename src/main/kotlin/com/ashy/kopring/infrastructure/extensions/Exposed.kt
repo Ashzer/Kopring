@@ -3,6 +3,7 @@ package com.ashy.kopring.infrastructure.extensions
 import com.ashy.kopring.infrastructure.failures.DatabaseFailure
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.exposedLogger
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.SQLIntegrityConstraintViolationException
 import java.sql.SQLSyntaxErrorException
 
@@ -12,8 +13,10 @@ fun <T> handleDatabaseOperation(operation: () -> T): Result<T> {
     }
     exposedLogger.info("$context | Start")
     return try {
-        Result.success(operation()).also {
-            exposedLogger.info("$context | Completed Successfully")
+        transaction {
+            Result.success(operation()).also {
+                exposedLogger.info("$context | Completed Successfully")
+            }
         }
     } catch (e: ExposedSQLException) {
         val failure = when (val cause = e.cause) {

@@ -15,4 +15,3 @@ data class MobileAppVersion(
     @JvmInline
     value class MobileAppVersionId(val value: Int)
 }
-
