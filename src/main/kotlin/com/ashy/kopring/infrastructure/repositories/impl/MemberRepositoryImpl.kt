@@ -39,7 +39,7 @@ class MemberRepositoryImpl : MemberRepository {
         }
     }
 
-    override suspend fun deleteMemberById(id: Int) = transaction {
+    override fun deleteMemberById(id: Int) = transaction {
         Thread.sleep(5000)
         MemberEntity.existById(id).let { exist ->
             if (exist) {
